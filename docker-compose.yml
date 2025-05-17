@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: gobe_template_db
+    restart: always
+    environment:
+      POSTGRES_USER: gobe
+      POSTGRES_PASSWORD: gobesecret
+      POSTGRES_DB: gobedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gobe_template_backend
+    restart: always
+    environment:
+      DATABASE_URL: postgres://gobe:gobesecret@postgres:5432/gobedb?sslmode=disable
+      JWT_SECRET_KEY: jwtsecretkey
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
