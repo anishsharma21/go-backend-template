@@ -28,7 +28,7 @@ func ClerkAuthMiddleware(next http.Handler) http.Handler {
 		validateHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			claims, ok := clerk.SessionClaimsFromContext(r.Context())
 			if !ok {
-				slog.LogAttrs(ctx, slog.LevelError, "Failed to get session claims")
+				slog.ErrorContext(ctx, "Failed to get session claims")
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}
@@ -36,11 +36,12 @@ func ClerkAuthMiddleware(next http.Handler) http.Handler {
 			// Extract user ID from claims
 			userID := claims.Subject
 			if userID == "" {
-				slog.LogAttrs(ctx, slog.LevelError, "User ID not found in claims")
+				slog.ErrorContext(ctx, "User ID not found in claims")
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}
 
+			// Add user ID to the existing context (preserving request ID)
 			ctx := context.WithValue(r.Context(), internal.CLERK_USER_ID_KEY, userID)
 
 			next.ServeHTTP(w, r.WithContext(ctx))

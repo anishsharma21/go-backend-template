@@ -30,6 +30,11 @@ func Routes(dbPool *pgxpool.Pool) *http.ServeMux {
 			ApplyLogging: true,
 			ApplyJWT:     true,
 		},
+		fmt.Sprintf("GET /%s/users/{clerk_user_id}", internal.API_VERSION): {
+			Handler:      handlers.GetUserByClerkUserId(dbPool),
+			ApplyLogging: true,
+			ApplyJWT:     true,
+		},
 		fmt.Sprintf("DELETE /%s/users/{id}", internal.API_VERSION): {
 			Handler:      handlers.DeleteUserByID(dbPool),
 			ApplyLogging: true,

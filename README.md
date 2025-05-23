@@ -120,6 +120,16 @@ Tests run locally use the local postgres database. To replicate the CICD environ
 go test ./tests -v
 ```
 
+## Production
+
+When deploying to production, you'll need to set all the above environment variables with their production variations. Assuming you're deploying to `Railway`, you can spin-up a `Postgres` database and set some of the database related environment variables to those provided by that db instance. You will also need to set the `RUN_MIGRATION` env variable to `true` in production:
+
+```bash
+RUN_MIGRATION=true
+```
+
+ For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation.
+
 ## License
 
 This project is licensed under the MIT License.

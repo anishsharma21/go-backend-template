@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/anishsharma21/go-web-dev-template/internal/queries"
+	"github.com/anishsharma21/go-web-dev-template/internal/db"
 	"github.com/anishsharma21/go-web-dev-template/internal/types/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -72,6 +72,40 @@ func GetUsers(dbPool *pgxpool.Pool) http.Handler {
 	})
 }
 
+func GetUserByClerkUserId(dbPool *pgxpool.Pool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		clerkUserId := r.PathValue("clerk_user_id")
+
+		if clerkUserId == "" {
+			slog.Error("Clerk user ID is empty")
+			http.Error(w, "Clerk user ID is required", http.StatusBadRequest)
+			return
+		}
+
+		user, err := db.GetUserByClerkUserId(ctx, dbPool, clerkUserId)
+		if err != nil {
+			if err == pgx.ErrNoRows {
+				slog.Error("User not found", "clerk_user_id", clerkUserId)
+				http.Error(w, "User not found", http.StatusNotFound)
+				return
+			}
+			slog.Error("Failed to get user by Clerk user ID", "error", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		err = json.NewEncoder(w).Encode(user)
+		if err != nil {
+			slog.Error("Failed to encode user to JSON", "error", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
 func DeleteUserByID(dbPool *pgxpool.Pool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var ctx = r.Context()
@@ -83,7 +117,7 @@ func DeleteUserByID(dbPool *pgxpool.Pool) http.Handler {
 			return
 		}
 
-		err := queries.DeleteUserByID(ctx, dbPool, userID)
+		err := db.DeleteUserByID(ctx, dbPool, userID)
 		if err != nil {
 			slog.Error("Failed to delete user", "error", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)

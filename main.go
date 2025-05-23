@@ -28,8 +28,8 @@ func init() {
 		os.Exit(1)
 	}
 
-	defaultHandler := slog.NewJSONHandler(os.Stdout, nil)
-	slog.SetDefault(slog.New(&middleware.CustomLogHandler{Handler: defaultHandler}))
+	defaultLogHandler := slog.NewJSONHandler(os.Stdout, nil)
+	slog.SetDefault(slog.New(&middleware.CustomLogHandler{Handler: defaultLogHandler}))
 }
 
 func main() {
@@ -78,7 +78,7 @@ func main() {
 		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			slog.Error("HTTP server closed early", "error", err)
 		}
-		slog.Info("Stopped server new connections.")
+		slog.Info("Stopped serving new connections.")
 		shutdownChan <- true
 	}()
 

@@ -1,4 +1,4 @@
-package queries
+package db
 
 import (
 	"context"
@@ -40,20 +40,23 @@ func AddUser(ctx context.Context, dbPool *pgxpool.Pool, user models.User) error 
 	return nil
 }
 
-func GetUserById(ctx context.Context, dbPool *pgxpool.Pool, id string) (models.User, error) {
+func GetUserByClerkUserId(ctx context.Context, dbPool *pgxpool.Pool, clerkUserId string) (models.User, error) {
 	query := "SELECT * FROM users WHERE clerk_id = $1"
 
-	row := dbPool.QueryRow(ctx, query, id)
+	row := dbPool.QueryRow(ctx, query, clerkUserId)
 
 	var user models.User
 	if err := row.Scan(&user.ID, &user.ClerkID, &user.CreatedAt); err != nil {
-		return models.User{}, fmt.Errorf("error retrieving user with clerk_id %q: %w", id, err)
+		if err == pgx.ErrNoRows {
+			return models.User{}, err
+		}
+		return models.User{}, fmt.Errorf("error retrieving user with clerk_id %q: %w", clerkUserId, err)
 	}
 	return user, nil
 }
 
 func GetUsers(ctx context.Context, dbPool *pgxpool.Pool) ([]models.User, error) {
-	query := "SELECT id, clerk_id, created_at FROM users"
+	query := "SELECT * FROM users"
 
 	rows, err := dbPool.Query(ctx, query)
 	if err != nil {

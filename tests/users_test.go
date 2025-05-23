@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/anishsharma21/go-web-dev-template/internal"
 	"github.com/anishsharma21/go-web-dev-template/internal/handlers"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -19,7 +20,7 @@ var dbPool *pgxpool.Pool
 var ctx, cancel = context.WithCancel(context.Background())
 
 func TestMain(m *testing.M) {
-	dbConnStr := os.Getenv("DATABASE_URL")
+	dbConnStr := os.Getenv(internal.DATABASE_URL)
 	config, err := pgxpool.ParseConfig(dbConnStr)
 	if err != nil {
 		log.Fatalf("Failed to parse database connection string.\n")
@@ -43,7 +44,7 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	cancel()
-	// Exit after running the tests
+
 	os.Exit(code)
 }
 
@@ -70,7 +71,7 @@ func TestUserSignUpFlow(t *testing.T) {
 	defer resp.Body.Close()
 
 	// Assert
-	if resp.StatusCode != 201 { // Note: Your handler returns 201 Created, not 200 OK
+	if resp.StatusCode != 201 {
 		t.Errorf("Expected status code 201, got %v\n", resp.StatusCode)
 	}
 
