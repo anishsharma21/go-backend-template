@@ -128,7 +128,11 @@ When deploying to production, you'll need to set all the above environment varia
 RUN_MIGRATION=true
 ```
 
- For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation.
+For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation.
+
+## Todos
+
+TODO: use dotenv package to get env variables from .env file instead
 
 ## License
 
