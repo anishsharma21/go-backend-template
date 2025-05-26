@@ -50,6 +50,7 @@ jobs:
           GOOSE_DRIVER: postgres
           GOOSE_DBSTRING: "host=localhost port=5432 user=testuser password=testpassword dbname=testdb sslmode=disable"
           GOOSE_MIGRATION_DIR: migrations
+          CLERK_WEBHOOK_SIGNING_SECRET: secretkey
         run: |
           goose status
           goose up
