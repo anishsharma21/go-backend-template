@@ -50,7 +50,6 @@ jobs:
           GOOSE_DRIVER: postgres
           GOOSE_DBSTRING: "host=localhost port=5432 user=testuser password=testpassword dbname=testdb sslmode=disable"
           GOOSE_MIGRATION_DIR: migrations
-          CLERK_WEBHOOK_SIGNING_SECRET: secretkey
         run: |
           goose status
           goose up
@@ -60,6 +59,7 @@ jobs:
           ENV: cicd
           DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb?sslmode=disable
           JWT_SECRET_KEY: secretkey
+          CLERK_WEBHOOK_SIGNING_SECRET: secretkey
         run: go test ./tests
 
       - name: Build
