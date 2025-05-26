@@ -34,7 +34,8 @@ export GOOSE_DBSTRING="host=localhost port=5432 user=gobe password=gobesecret db
 export DATABASE_URL="postgresql://gobe:gobesecret@localhost:5432/gobedb?sslmode=disable"
 export GOOSE_MIGRATION_DIR=migrations
 export JWT_SECRET_KEY=jwtsecret
-export CLERK_SECRET_KEY=sk_test_(get this from Clerk dashboard)
+export CLERK_SECRET_KEY=(from Clerk dashboard)
+export CLERK_WEBHOOK_SIGNING_SECRET=(from Clerk dashboard)
 ```
 
 ### Docker + postgres
@@ -120,6 +121,16 @@ Tests run locally use the local postgres database. To replicate the CICD environ
 go test ./tests -v
 ```
 
+### Webhooks
+
+To sync data between `Clerk` and the backend, a webhook is used to listen for `user.created` events. The webhook endpoint needs to be configured in clerk (see `Production` section below, can also be setup for local testing). You need to first ensure you have `ngrok` installed locally, which will create a tunnel from external network connections and your local server:
+
+```bash
+brew install ngrok
+```
+
+Then, you can run `ngrok http 8080`. It will display a forwarding URL which you can paste into a new webhook endpoint in `Clerk`. Then, `Clerk` will give you a signing secret which you can set as an environment variable (`CLERK_WEBHOOK_SIGNING_SECRET`). Then, run your server with `air`, and send a test event from the webhooks section in Clerk. If all goes well, a new user should be created in your database. You can check your logs and/or use Postman to verify.
+
 ## Production
 
 When deploying to production, you'll need to set all the above environment variables with their production variations. Assuming you're deploying to `Railway`, you can spin-up a `Postgres` database and set some of the database related environment variables to those provided by that db instance. You will also need to set the `RUN_MIGRATION` env variable to `true` in production:
@@ -130,9 +141,11 @@ RUN_MIGRATION=true
 
 For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation.
 
+**VERY IMPORTANT** you will also need to setup the webhook endpoint in the clerk dashboard. Navigate to your app in `Production` mode, go to `Configure`/`Webhooks` and click `Add Endpoint`. Then paste in the webhook endpoint (from `routes.go` file), it should look something like `https://your-production-domain.com/v1/webhooks`.
+
 ## Todos
 
-TODO: use dotenv package to get env variables from .env file instead
+TODO: use dotenv package to get env variables from .env file instead when in dev mode
 
 ## License
 

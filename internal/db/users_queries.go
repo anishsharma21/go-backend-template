@@ -13,29 +13,18 @@ import (
 func AddUser(ctx context.Context, dbPool *pgxpool.Pool, user models.User) error {
 	query := "INSERT INTO users (clerk_id) VALUES ($1)"
 
-	tx, err := dbPool.Begin(ctx)
+	ct, err := dbPool.Exec(ctx, query, user.ClerkID)
 	if err != nil {
-		return fmt.Errorf("failed to start transaction: %v", err)
-	}
-	defer tx.Rollback(ctx)
-
-	ct, err := tx.Exec(ctx, query, user.ClerkID)
-	if err != nil {
-		tx.Rollback(ctx)
-		return fmt.Errorf("failed to execute query: %v", err)
+		return fmt.Errorf("failed to insert user: %w", err)
 	}
 
 	if ct.RowsAffected() != 1 {
-		tx.Rollback(ctx)
-		return fmt.Errorf("failed to insert user: %v", err)
+		return fmt.Errorf("unexpected number of rows affected: %d", ct.RowsAffected())
 	}
 
-	err = tx.Commit(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to commit transaction: %v", err)
-	}
-
-	slog.InfoContext(ctx, fmt.Sprintf("User signed up successfully: %s", user.ID), "command_tag", ct.String())
+	slog.InfoContext(ctx, "User signed up successfully",
+		"clerk_id", user.ClerkID,
+		"command_tag", ct.String())
 
 	return nil
 }

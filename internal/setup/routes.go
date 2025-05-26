@@ -41,6 +41,12 @@ func Routes(dbPool *pgxpool.Pool) *http.ServeMux {
 			ApplyJWT:     true,
 		},
 
+		fmt.Sprintf("POST /%s/webhooks", internal.API_VERSION): {
+			Handler:      handlers.ClerkWebhookHandler(dbPool),
+			ApplyLogging: true,
+			ApplyJWT:     false,
+		},
+
 		"GET /static/": {
 			Handler:      http.StripPrefix("/static/", http.FileServer(http.Dir("static"))),
 			ApplyLogging: false,
