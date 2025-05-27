@@ -30,7 +30,7 @@ Begin by setting the following environment variables:
 
 ```bash
 export GOOSE_DRIVER=postgres
-export GOOSE_DBSTRING="host=localhost port=5432 user=gobe password=gobesecret dbname=gobedb sslmode=disable"
+export GOOSE_DBSTRING="postgresql://gobe:gobesecret@localhost:5432/gobedb?sslmode=disable"
 export DATABASE_URL="postgresql://gobe:gobesecret@localhost:5432/gobedb?sslmode=disable"
 export GOOSE_MIGRATION_DIR=migrations
 export JWT_SECRET_KEY=jwtsecret
@@ -135,20 +135,15 @@ Then, you can run `ngrok http 8080`. It will display a forwarding URL which you 
 
 ## Production
 
-When deploying to production, you'll need to set all the above environment variables with their production variations. Assuming you're deploying to `Railway`, you can spin-up a `Postgres` database and set some of the database related environment variables to those provided by that db instance. You will also need to set the `RUN_MIGRATION` env variable to `true` in production:
+When deploying to production, you'll need to set all the above environment variables with their production variations. Assuming you're deploying to `Railway`, you can spin-up a `Postgres` database and set some of the database related environment variables to those provided by that db instance.
 
-```bash
-RUN_MIGRATION=true
-```
-
-For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation.
+For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth has been configured with your own credentials. This is more important for the frontend, for the backend though you will need to replace the development api key with the production variation. You can refer to the [clerk documentation on setting up for production](https://clerk.com/docs/deployments/overviewhttps://clerk.com/docs/quickstarts/go#production-setup).
 
 **VERY IMPORTANT** you will also need to setup the webhook endpoint in the clerk dashboard. Navigate to your app in `Production` mode, go to `Configure`/`Webhooks` and click `Add Endpoint`. Then paste in the webhook endpoint (from `routes.go` file), it should look something like `https://your-production-domain.com/v1/webhooks`.
 
 ## Todos
 
 TODO: use dotenv package to get env variables from .env file instead when in dev mode
-TODO: caching in cicd pipeline is not optimised at install goose step
 
 ## License
 
