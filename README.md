@@ -35,6 +35,7 @@ export DATABASE_URL="postgresql://gobe:gobesecret@localhost:5432/gobedb?sslmode=
 export GOOSE_MIGRATION_DIR=migrations
 export JWT_SECRET_KEY=jwtsecret
 export ENVIRONMENT=development
+export RUN_MIGRATION=true
 export CLERK_SECRET_KEY=(from Clerk dashboard)
 export CLERK_WEBHOOK_SIGNING_SECRET=(from Clerk dashboard)
 ```

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/anishsharma21/go-web-dev-template/internal"
+	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 )
 
