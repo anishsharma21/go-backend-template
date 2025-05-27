@@ -1,5 +1,10 @@
 package internal
 
+import (
+	"log/slog"
+	"os"
+)
+
 // Context keys
 const CLERK_USER_ID_KEY = "clerk_user_id"
 const REQUEST_ID_KEY = "request_id"
@@ -14,5 +19,15 @@ const GOOSE_MIGRATION_DIR = "GOOSE_MIGRATION_DIR"
 const RUN_MIGRATION = "RUN_MIGRATION"
 const PORT = "PORT"
 
+var ENVIRONMENT string
+
 // API version
 const API_VERSION = "v1"
+
+func init() {
+	ENVIRONMENT = os.Getenv("ENVIRONMENT")
+	if ENVIRONMENT == "" {
+		slog.Warn("ENVIRONMENT not set, defaulting to development")
+		ENVIRONMENT = "development"
+	}
+}

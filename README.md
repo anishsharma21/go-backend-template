@@ -34,6 +34,7 @@ export GOOSE_DBSTRING="host=localhost port=5432 user=gobe password=gobesecret db
 export DATABASE_URL="postgresql://gobe:gobesecret@localhost:5432/gobedb?sslmode=disable"
 export GOOSE_MIGRATION_DIR=migrations
 export JWT_SECRET_KEY=jwtsecret
+export ENVIRONMENT=development
 export CLERK_SECRET_KEY=(from Clerk dashboard)
 export CLERK_WEBHOOK_SIGNING_SECRET=(from Clerk dashboard)
 ```
@@ -146,6 +147,7 @@ For `clerk`, you will need to head to the clerk dashboard and ensure that OAuth 
 ## Todos
 
 TODO: use dotenv package to get env variables from .env file instead when in dev mode
+TODO: caching in cicd pipeline is not optimised at install goose step
 
 ## License
 

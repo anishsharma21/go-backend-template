@@ -32,9 +32,11 @@ var WEBHOOK_SECRET string
 
 func init() {
 	WEBHOOK_SECRET = os.Getenv(internal.CLERK_WEBHOOK_SIGNING_SECRET)
-	if WEBHOOK_SECRET == "" {
+	if WEBHOOK_SECRET == "" && internal.ENVIRONMENT == "production" {
 		slog.ErrorContext(context.Background(), "CLERK_WEBHOOK_SIGNING_SECRET not set")
 		os.Exit(1)
+	} else if WEBHOOK_SECRET == "" && internal.ENVIRONMENT == "development" {
+		slog.WarnContext(context.Background(), "CLERK_WEBHOOK_SIGNING_SECRET not set")
 	}
 }
 
